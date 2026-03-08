@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Little Universe — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --night:      #0d0810;
+      --deep:       #140b18;
+      --panel:      #1c1020;
+      --rim:        #2e1a2e;
+      --rose:       #e07a90;
+      --deep-rose:  #c0394b;
+      --blush:      #fde8ee;
+      --neon:       #ff6b95;
+      --gold:       #d4a843;
+      --gold-soft:  #f0d080;
+      --cream:      #fdf4f0;
+      --muted:      #a07880;
+      --text-light: #f5e8ec;
+      --text-dim:   #8a6070;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--night);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══ CANVAS PETALS ══ */
+    #petal-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══ DAY COUNTER — top right ══ */
+    .day-counter {
+      position: fixed;
+      top: 20px; right: 20px;
+      z-index: 300;
+      background: rgba(20, 11, 24, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(224,122,144,0.25);
+      border-radius: 20px;
+      padding: 10px 18px;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .day-counter-number {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.4rem;
+      color: var(--neon);
+      line-height: 1;
+      text-shadow: 0 0 18px rgba(255,107,149,0.5);
+      display: block;
+    }
+    .day-counter-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* ══ HERO SECTION ══ */
+    .hero {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 24px 60px;
+      overflow: hidden;
+    }
+
+    /* Radial glow behind hero text */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(192,57,75,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Mascots */
+    .mascot-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.9s ease both;
+    }
+
+    .mascot-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(224,122,144,0.2);
+      border-radius: 50px;
+      padding: 8px 16px 8px 8px;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+    .mascot-pill:hover {
+      background: rgba(224,122,144,0.1);
+      border-color: rgba(224,122,144,0.5);
+      transform: translateY(-3px);
+    }
+
+    .mascot-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(224,122,144,0.3);
+      background: var(--rim);
+    }
+    .mascot-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--neon);
+      letter-spacing: 0.3px;
+    }
+    .mascot-role {
+      font-size: 0.67rem;
+      color: var(--muted);
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* Eyebrow */
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+      opacity: 0.8;
+      animation: fadeUp 1s ease both 0.1s;
+    }
+
+    /* Main title */
+    .hero h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(3.5rem, 11vw, 8rem);
+      color: var(--text-light);
+      line-height: 1.05;
+      text-shadow:
+        0 0 60px rgba(255,107,149,0.25),
+        0 2px 40px rgba(0,0,0,0.5);
+      animation: fadeUp 1s ease both 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 em {
+      color: var(--neon);
+      text-shadow: 0 0 40px rgba(255,107,149,0.6);
+      font-style: normal;
+    }
+
+    /* Subtitle */
+    .hero-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.7;
+      animation: fadeUp 1s ease both 0.35s;
+      margin-bottom: 48px;
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fadeUp 1s ease both 0.5s;
+      color: var(--text-dim);
+    }
+    .scroll-hint span {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--rose), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ══ CHAPTERS SECTION ══ */
+    .chapters {
+      position: relative;
+      z-index: 10;
+      padding: 60px 24px 100px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .chapters-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .chapters-header .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); display: inline-block; }
+    .section-label-text {
+      font-size: 0.67rem;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .chapters-header h2 {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      color: var(--text-light);
+    }
+
+    /* Cards grid */
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 680px) {
+      .home-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Chapter card */
+    .nav-card {
+      position: relative;
+      text-decoration: none;
+      background: var(--panel);
+      border: 1px solid var(--rim);
+      border-radius: 24px;
+      padding: 32px 28px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      group: true;
+    }
+
+    /* Glow on hover */
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(192,57,75,0.12), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      border-radius: 24px;
+    }
+    .nav-card:hover { transform: translateY(-6px); border-color: rgba(224,122,144,0.4); box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(224,122,144,0.15); }
+    .nav-card:hover::before { opacity: 1; }
+
+    /* Chapter number */
+    .chapter-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    /* Card icon */
+    .card-icon {
+      font-size: 2.8rem;
+      line-height: 1;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-card:hover .card-icon { transform: scale(1.15) rotate(-4deg); }
+
+    .nav-card h2 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.2rem;
+      color: var(--text-light);
+      line-height: 1.1;
+      transition: color 0.3s;
+    }
+    .nav-card:hover h2 { color: var(--neon); }
+
+    .nav-card p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.02rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    /* Card footer */
+    .nav-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .mascot-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+    .mascot-tag .who {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.3px;
+    }
+    .mascot-tag .says {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+    }
+
+    .open-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--rose);
+      transition: all 0.3s;
+    }
+    .open-btn .arrow {
+      display: inline-block;
+      transition: transform 0.3s;
+    }
+    .nav-card:hover .open-btn { color: var(--neon); }
+    .nav-card:hover .open-btn .arrow { transform: translateX(4px); }
+
+    /* ══ FOOTER ══ */
+    .site-footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 0 24px 60px;
+    }
+    .site-footer p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text-dim);
+    }
+    .site-footer strong {
+      color: var(--neon);
+      font-weight: 400;
+      text-shadow: 0 0 16px rgba(255,107,149,0.4);
+    }
+
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stagger chapter cards */
+    .nav-card:nth-child(1) { animation: fadeUp 0.7s ease both 0.1s; }
+    .nav-card:nth-child(2) { animation: fadeUp 0.7s ease both 0.2s; }
+    .nav-card:nth-child(3) { animation: fadeUp 0.7s ease both 0.3s; }
+    .nav-card:nth-child(4) { animation: fadeUp 0.7s ease both 0.4s; }
+
+    /* Star specks */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle ease infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.05; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.3); }
+    }
+
+    /* Divider line */
+    .divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--rose), transparent);
+      margin: 0 auto 48px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Petal canvas -->
+  <canvas id="petal-canvas"></canvas>
+
+  <!-- Day Counter -->
+  <div class="day-counter">
+    <span class="day-counter-number" id="dayNum">0</span>
+    <span class="day-counter-label">days together</span>
+  </div>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="mascot-row">
+      <div class="mascot-pill">
+        <img class="mascot-avatar" src="models/kitty.png" alt="Kitty" />
+        <div>
+          <div class="mascot-name">Kitty</div>
+          <div class="mascot-role">soft hugs guide</div>
+        </div>
+      </div>
+      <div class="mascot-pill">
+        <img class="mascot-avatar" src="models/hammy.png" alt="Hammy" />
+        <div>
+          <div class="mascot-name">Hammy</div>
+          <div class="mascot-role">tiny love notes</div>
+        </div>
+      </div>
+      <div class="mascot-pill">
+        <img class="mascot-avatar" src="models/mochi.png" alt="Mochi" />
+        <div>
+          <div class="mascot-name">Mochi</div>
+          <div class="mascot-role">groovy DJ 🎧</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-eyebrow">Private Universe · Arnav → Anokhi</div>
+
+    <h1>Our Little<br><em>Romantic</em> Universe</h1>
+
+    <p class="hero-sub">
+      A secret, cinematic space built just for the two of us —<br>
+      memories, letters, songs, and all the words that glow the way you do.
+    </p>
+
+    <div class="scroll-hint">
+      <span>Explore</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ══ CHAPTERS ══ -->
+  <section class="chapters">
+    <div class="chapters-header">
+      <div class="section-label">
+        <span class="dot"></span>
+        <span class="section-label-text">Choose where we wander</span>
+        <span class="dot"></span>
+      </div>
+      <h2>Our Chapters</h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="home-grid">
+
+      <a href="album.html" class="nav-card">
+        <div class="chapter-num">CHAPTER 01</div>
+        <div class="card-icon">📸</div>
+        <h2>Photo Album</h2>
+        <p>Polaroid-style memories waiting for every smile, every silly pose, every moment that quietly felt like home.</p>
+        <div class="nav-card-footer">
+          <div class="mascot-tag">
+            <span class="who">🐱 Kitty says:</span>
+            <span class="says">Add all our cuteness.</span>
+          </div>
+          <div class="open-btn">Open <span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a href="letter.html" class="nav-card">
+        <div class="chapter-num">CHAPTER 02</div>
+        <div class="card-icon">💌</div>
+        <h2>Love Letter</h2>
+        <p>A parchment page to pour your heart onto — for the soft, honest things you feel but never quite say aloud.</p>
+        <div class="nav-card-footer">
+          <div class="mascot-tag">
+            <span class="who">🐹 Hammy says:</span>
+            <span class="says">Write slowly. Feel deeply.</span>
+          </div>
+          <div class="open-btn">Open <span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a href="music.html" class="nav-card">
+        <div class="chapter-num">CHAPTER 03</div>
+        <div class="card-icon">🎵</div>
+        <h2>Mixtape</h2>
+        <p>A 90s-style Walkman for all your forever songs — late-night calls, long walks, and "this is so us" melodies.</p>
+        <div class="nav-card-footer">
+          <div class="mascot-tag">
+            <span class="who">🐒 Mochi says:</span>
+            <span class="says">Queue the butterflies.</span>
+          </div>
+          <div class="open-btn">Open <span class="arrow">→</span></div>
+        </div>
+      </a>
+
+      <a href="womensday.html" class="nav-card">
+        <div class="chapter-num">CHAPTER 04</div>
+        <div class="card-icon">🌹</div>
+        <h2>Women's Day</h2>
+        <p>A cinematic tribute — petals, poetry, and a glowing promise to the woman who holds your entire world.</p>
+        <div class="nav-card-footer">
+          <div class="mascot-tag">
+            <span class="who">🐱🐹🐒 All three:</span>
+            <span class="says">You are everything.</span>
+          </div>
+          <div class="open-btn">Open <span class="arrow">→</span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p>Crafted for <strong>Anokhi</strong> — may this little corner always feel like coming home. 🌸</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    /* ── Day Counter ── */
+    const start = new Date('2024-06-03T20:00:00');
+    document.getElementById('dayNum').textContent = Math.floor((Date.now() - start) / 86400000);
+
+    /* ── Twinkling Stars ── */
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 90; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 2 + 0.5;
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*100}%;
+        top:${Math.random()*100}%;
+        animation-duration:${2 + Math.random()*5}s;
+        animation-delay:${Math.random()*6}s;
+      `;
+      starsEl.appendChild(s);
+    }
+
+    /* ── Falling Petals (Canvas) ── */
+    const canvas = document.getElementById('petal-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const PETALS = [];
+    const EMOJIS = ['🌸','🌺','🌷','✿','❀'];
+
+    class Petal {
+      constructor() { this.reset(true); }
+      reset(initial) {
+        this.x = Math.random() * canvas.width;
+        this.y = initial ? Math.random() * canvas.height : -30;
+        this.size = 14 + Math.random() * 14;
+        this.speed = 0.6 + Math.random() * 1.0;
+        this.drift = (Math.random() - 0.5) * 0.6;
+        this.rot = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.03;
+        this.opacity = 0.25 + Math.random() * 0.35;
+        this.emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+      }
+      update() {
+        this.y += this.speed;
+        this.x += this.drift;
+        this.rot += this.rotSpeed;
+        if (this.y > canvas.height + 30) this.reset(false);
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rot);
+        ctx.font = `${this.size}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.emoji, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < 28; i++) PETALS.push(new Petal());
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      PETALS.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

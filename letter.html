@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Little Universe — Love Letter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --night:      #0d0810;
+      --deep:       #140b18;
+      --panel:      #1c1020;
+      --rim:        #2e1a2e;
+      --rose:       #e07a90;
+      --deep-rose:  #c0394b;
+      --blush:      #fde8ee;
+      --neon:       #ff6b95;
+      --gold:       #d4a843;
+      --cream:      #fdf8f0;
+      --parchment:  #faf3e8;
+      --parch-line: rgba(180,140,100,0.18);
+      --ink:        #2c1a10;
+      --ink-soft:   #5c3d2e;
+      --muted:      #a07880;
+      --text-light: #f5e8ec;
+      --text-dim:   #8a6070;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--night);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Stars bg ── */
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .star { position: absolute; border-radius: 50%; background: white; animation: twinkle ease infinite; }
+    @keyframes twinkle { 0%,100%{opacity:.04;transform:scale(1)} 50%{opacity:.35;transform:scale(1.4)} }
+
+    /* ── Falling petals ── */
+    #petal-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+    /* ── Fixed UI ── */
+    .fixed-ui {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(13,8,16,0.8);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(224,122,144,0.15);
+    }
+
+    .back-home-btn {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--neon);
+      font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px;
+      background: rgba(255,107,149,0.08);
+      border: 1px solid rgba(255,107,149,0.25);
+      border-radius: 50px; padding: 6px 16px;
+      transition: all 0.25s;
+    }
+    .back-home-btn:hover { background: rgba(255,107,149,0.16); transform: translateX(-2px); }
+
+    .day-counter { text-align: right; }
+    .day-counter-number {
+      font-family: 'Great Vibes', cursive; font-size: 2rem;
+      color: var(--neon); line-height: 1; display: block;
+      text-shadow: 0 0 14px rgba(255,107,149,0.45);
+    }
+    .day-counter-label {
+      font-size: 0.58rem; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--muted); display: block;
+    }
+
+    /* ── Page shell ── */
+    .page-shell {
+      position: relative; z-index: 10;
+      max-width: 1060px; margin: 0 auto;
+      padding: 100px 24px 80px;
+    }
+
+    /* ── Header ── */
+    .page-heading {
+      text-align: center; margin-bottom: 52px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .mascot-row {
+      display: flex; justify-content: center; gap: 14px;
+      margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .mascot-pill {
+      display: flex; align-items: center; gap: 9px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(224,122,144,0.2);
+      border-radius: 50px; padding: 7px 14px 7px 7px;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s;
+    }
+    .mascot-pill:hover { background: rgba(224,122,144,0.1); border-color: rgba(224,122,144,0.5); transform: translateY(-2px); }
+    .mascot-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(224,122,144,0.3); background: var(--rim); }
+    .mascot-name { font-size: 0.75rem; font-weight: 700; color: var(--neon); }
+    .mascot-role { font-size: 0.65rem; color: var(--muted); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+
+    .page-heading h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      color: var(--text-light); line-height: 1.1; margin-bottom: 12px;
+      text-shadow: 0 0 40px rgba(255,107,149,0.2);
+    }
+    .page-heading p {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.1rem; color: var(--muted); max-width: 480px; margin: 0 auto;
+    }
+
+    /* ── Layout ── */
+    .letter-shell {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 760px) {
+      .letter-shell { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════
+       THE PARCHMENT LETTER
+    ══════════════════════════ */
+    .letter-paper {
+      background: var(--parchment);
+      border-radius: 4px 4px 4px 4px;
+      position: relative;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.08),
+        0 12px 48px rgba(0,0,0,0.55),
+        0 0 0 1px rgba(180,140,100,0.25),
+        inset 0 0 80px rgba(212,168,67,0.06);
+      animation: unfoldLetter 1s ease both 0.2s;
+      overflow: visible;
+    }
+
+    @keyframes unfoldLetter {
+      from { opacity: 0; transform: perspective(800px) rotateX(6deg) translateY(30px); }
+      to   { opacity: 1; transform: perspective(800px) rotateX(0deg) translateY(0); }
+    }
+
+    /* Ruled lines */
+    .letter-paper::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        transparent, transparent 41px,
+        var(--parch-line) 41px, var(--parch-line) 42px
+      );
+      pointer-events: none; border-radius: 4px;
+    }
+
+    /* Left red margin line */
+    .letter-paper::after {
+      content: '';
+      position: absolute; top: 0; left: 72px;
+      width: 1px; height: 100%;
+      background: rgba(192,57,75,0.2);
+      pointer-events: none;
+    }
+
+    /* Wax seal */
+    .wax-seal {
+      position: absolute;
+      top: -28px; left: 50%; transform: translateX(-50%);
+      width: 68px; height: 68px; z-index: 20;
+      filter: drop-shadow(0 6px 16px rgba(139,26,51,0.5));
+      animation: sealDrop 0.9s cubic-bezier(0.34,1.56,0.64,1) both 0.6s;
+    }
+    @keyframes sealDrop {
+      from { opacity: 0; transform: translateX(-50%) scale(0.4) rotate(-20deg); }
+      to   { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
+    }
+    .wax-seal svg { width: 100%; height: 100%; }
+
+    /* Letter inner padding */
+    .letter-body {
+      padding: 60px 48px 52px 88px;
+      position: relative;
+    }
+    @media (max-width: 500px) {
+      .letter-body { padding: 50px 24px 40px 40px; }
+    }
+
+    /* Date */
+    .letter-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.9rem;
+      color: var(--ink-soft); text-align: right;
+      margin-bottom: 32px; opacity: 0.7;
+    }
+
+    /* Opening */
+    .letter-opening {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.4rem; color: var(--deep-rose);
+      margin-bottom: 28px; line-height: 1.1;
+    }
+
+    /* Body paragraphs */
+    .letter-body p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.13rem; line-height: 2.1;
+      color: var(--ink); margin-bottom: 22px;
+      font-style: italic;
+    }
+
+    /* Highlight special phrases */
+    .letter-body p .highlight {
+      color: var(--deep-rose);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Closing */
+    .letter-closing {
+      margin-top: 36px;
+      font-family: 'Great Vibes', cursive;
+      font-size: 2rem; color: var(--ink-soft);
+      margin-bottom: 4px;
+    }
+    .letter-signature {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.8rem; color: var(--deep-rose);
+      line-height: 1.1;
+      text-shadow: 0 1px 12px rgba(192,57,75,0.2);
+    }
+
+    /* Corner roses */
+    .corner { position: absolute; font-size: 1.2rem; opacity: 0.25; pointer-events: none; }
+    .corner.tl { top: 12px; left: 12px; }
+    .corner.tr { top: 12px; right: 12px; }
+    .corner.bl { bottom: 12px; left: 12px; }
+    .corner.br { bottom: 12px; right: 12px; }
+
+    /* ══════════════════════════
+       SIDE PANEL
+    ══════════════════════════ */
+    .letter-side {
+      display: flex; flex-direction: column; gap: 20px;
+      position: sticky; top: 88px;
+      animation: fadeUp 0.9s ease both 0.4s;
+    }
+
+    /* Hammy note card */
+    .hammy-note {
+      background: rgba(28,16,32,0.85);
+      border: 1px solid rgba(224,122,144,0.2);
+      border-radius: 20px; padding: 24px 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .note-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .note-mascot-big { font-size: 2.2rem; animation: bounce 2.5s ease infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+    .note-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--rose); display: block;
+    }
+    .note-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.5rem; color: var(--text-light);
+      line-height: 1.1;
+    }
+
+    .hammy-note p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 1rem;
+      color: var(--text-dim); line-height: 1.65;
+    }
+
+    /* Hearts counter card */
+    .hearts-card {
+      background: rgba(192,57,75,0.12);
+      border: 1px solid rgba(192,57,75,0.25);
+      border-radius: 20px; padding: 20px;
+      text-align: center;
+    }
+    .hearts-num {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem; color: var(--neon);
+      text-shadow: 0 0 20px rgba(255,107,149,0.5);
+      line-height: 1; display: block;
+    }
+    .hearts-label {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); margin-top: 4px; display: block;
+    }
+    .hearts-row {
+      font-size: 1.4rem; margin-top: 10px;
+      animation: pulse 1.6s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+    /* Kitty quote card */
+    .kitty-card {
+      background: rgba(28,16,32,0.85);
+      border: 1px solid rgba(224,122,144,0.15);
+      border-radius: 20px; padding: 20px;
+    }
+    .kitty-inner { display: flex; gap: 12px; align-items: flex-start; }
+    .kitty-emoji { font-size: 1.8rem; flex-shrink: 0; }
+    .kitty-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 0.95rem;
+      color: var(--text-dim); line-height: 1.6;
+    }
+    .kitty-text strong { color: var(--rose); font-style: normal; font-weight: 700; }
+
+    /* Footnote */
+    .page-footnote {
+      text-align: center; margin-top: 48px;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 1.05rem;
+      color: var(--text-dim);
+      animation: fadeUp 1s ease both 0.6s;
+    }
+    .page-footnote strong { color: var(--neon); font-weight: 400; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stars" id="stars"></div>
+  <canvas id="petal-canvas"></canvas>
+
+  <!-- Fixed UI -->
+  <div class="fixed-ui">
+    <a href="index.html" class="back-home-btn">⟵ Back to Home</a>
+    <div class="day-counter">
+      <span class="day-counter-number" id="dayNum">0</span>
+      <span class="day-counter-label">days together</span>
+    </div>
+  </div>
+
+  <main class="page-shell">
+
+    <!-- Header -->
+    <header class="page-heading">
+      <div class="mascot-row">
+        <div class="mascot-pill">
+          <img class="mascot-avatar" src="models/kitty.png" alt="Kitty" />
+          <div><div class="mascot-name">Kitty</div><div class="mascot-role">guardian of your words</div></div>
+        </div>
+        <div class="mascot-pill">
+          <img class="mascot-avatar" src="models/hammy.png" alt="Hammy" />
+          <div><div class="mascot-name">Hammy</div><div class="mascot-role">letter coach</div></div>
+        </div>
+        <div class="mascot-pill">
+          <img class="mascot-avatar" src="models/mochi.png" alt="Mochi" />
+          <div><div class="mascot-name">Mochi</div><div class="mascot-role">background soundtrack</div></div>
+        </div>
+      </div>
+      <h1>A Love Letter for Anokhi</h1>
+      <p>Every line a petal unfolded, every pause a little breath between heartbeats.</p>
+    </header>
+
+    <!-- Letter + Side -->
+    <section class="letter-shell">
+
+      <!-- THE LETTER -->
+      <div class="letter-paper">
+        <div class="wax-seal">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="waxG" cx="30%" cy="20%" r="80%">
+                <stop offset="0%" stop-color="#ffccd8"/>
+                <stop offset="40%" stop-color="#d84a6a"/>
+                <stop offset="100%" stop-color="#8b1a33"/>
+              </radialGradient>
+            </defs>
+            <path d="M61 10c11 1 20 3 28 9 9 7 16 18 17 30 1 11-3 22-9 31-6 8-13 15-23 19-11 4-24 6-35 1C28 95 20 88 15 80 9 71 6 60 7 49c1-11 6-23 15-30C30 13 41 9 51 9c3 0 7 0 10 1Z" fill="url(#waxG)"/>
+            <circle cx="60" cy="55" r="25" fill="none" stroke="rgba(255,229,236,0.8)" stroke-width="3.5"/>
+            <text x="60" y="61" text-anchor="middle" font-family="Great Vibes, cursive" font-size="20" fill="#ffeef4">A❤</text>
+          </svg>
+        </div>
+
+        <span class="corner tl">🌸</span>
+        <span class="corner tr">🌷</span>
+        <span class="corner bl">✨</span>
+        <span class="corner br">🌹</span>
+
+        <div class="letter-body">
+          <div class="letter-date" id="letterDate">Loading…</div>
+
+          <p class="letter-opening">My Dearest Anokhi,</p>
+
+          <p>From the first moment I really saw you, something inside me softened and quietly decided: <span class="highlight">that I wanna spend my whole life with you.</span></p>
+
+          <p>Since then, the days have been stitched together with small, golden threads — your laugh on sleepy calls, your voice when you're excited, the way you say my name when you're soft. I fall for you over and over when <span class="highlight">you get mad at me for doing somethin' stupid</span> <em>(jo ki hamesha mere se expected hota hai 😅)</em></p>
+
+          <p>You are not just the pretty moments; you are the storms and the quiet after, the way you pick yourself up, the way you carry the world and still manage to bring light into mine. I admire you most when <span class="highlight">you are still in your period cramps and still wanna make yourself talk to me, rather than resting.</span> That is not small — that is everything.</p>
+
+          <p>There are corners of my future I can't see clearly yet, but every version that feels like home has you in it. In those quiet daydreams, we're <span class="highlight">waking up together in our room, cuddling in each other's arms</span> — because why can't we just do that?</p>
+
+          <p>I know I won't always get everything right. I'll fumble, I'll learn, I'll grow — but I promise to keep choosing you on the days that are easy and on the days that are heavy. I want you to remember that, even when I'm quiet, <span class="highlight">I am still right by your side — to love you, to support you, and to carry you in my heart.</span></p>
+
+          <p>Thank you for being the girl who turned ordinary days into something I ache to write about, who made the calendar feel like it finally had a meaning. Above everything, you are <span class="highlight">one of the most precious things I received from Bhagwan Ji</span> — and I am so endlessly, softly grateful that our paths found each other.</p>
+
+          <div class="letter-closing">With all of my love,</div>
+          <div class="letter-signature">Arnav 🌸</div>
+        </div>
+      </div>
+
+      <!-- SIDE PANEL -->
+      <aside class="letter-side">
+
+        <!-- Hammy note -->
+        <div class="hammy-note">
+          <div class="note-header">
+            <div class="note-mascot-big">🐹</div>
+            <div>
+              <span class="note-label">Hammy's note</span>
+              <div class="note-title">For you, Anokhi</div>
+            </div>
+          </div>
+          <p>This letter wasn't written to sound pretty. It was written to sound like <em>him</em> — messy, honest, and so full of love for you that he couldn't keep it inside anymore. That's what makes it real. 🌸</p>
+        </div>
+
+        <!-- Days counter card -->
+        <div class="hearts-card">
+          <span class="hearts-num" id="dayNum2">0</span>
+          <span class="hearts-label">days of choosing each other</span>
+          <div class="hearts-row">💕 💖 💕</div>
+        </div>
+
+        <!-- Kitty quote -->
+        <div class="kitty-card">
+          <div class="kitty-inner">
+            <div class="kitty-emoji">🐱</div>
+            <div class="kitty-text">
+              <strong>Kitty says:</strong> "Even on the days he's quiet — know that somewhere, he's thinking about cuddling in that room with you." 🫂
+            </div>
+          </div>
+        </div>
+
+      </aside>
+    </section>
+
+    <p class="page-footnote">
+      Written from the heart of <strong>Arnav</strong>, for the universe that is <strong>Anokhi</strong> 🌹
+    </p>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    /* Day counter */
+    const start = new Date('2024-06-03T20:00:00');
+    const days  = Math.floor((Date.now() - start) / 86400000);
+    document.getElementById('dayNum').textContent  = days;
+    document.getElementById('dayNum2').textContent = days;
+
+    /* Letter date */
+    document.getElementById('letterDate').textContent = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    /* Stars */
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const sz = Math.random() * 2 + 0.5;
+      s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*6}s;`;
+      starsEl.appendChild(s);
+    }
+
+    /* Petal canvas */
+    const canvas = document.getElementById('petal-canvas');
+    const ctx = canvas.getContext('2d');
+    function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+
+    const petals = [];
+    const emojis = ['🌸','🌷','✿','🌺'];
+    class Petal {
+      constructor(init) {
+        this.x = Math.random() * canvas.width;
+        this.y = init ? Math.random() * canvas.height : -20;
+        this.size = 10 + Math.random() * 12;
+        this.speed = 0.5 + Math.random() * 0.9;
+        this.drift = (Math.random() - 0.5) * 0.5;
+        this.rot = Math.random() * Math.PI * 2;
+        this.rotS = (Math.random() - 0.5) * 0.025;
+        this.alpha = 0.18 + Math.random() * 0.28;
+        this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+      }
+      update() { this.y += this.speed; this.x += this.drift; this.rot += this.rotS; if (this.y > canvas.height + 20) { this.y = -20; this.x = Math.random() * canvas.width; } }
+      draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.translate(this.x, this.y); ctx.rotate(this.rot); ctx.font = `${this.size}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(this.emoji, 0, 0); ctx.restore(); }
+    }
+    for (let i = 0; i < 22; i++) petals.push(new Petal(true));
+    (function loop() { ctx.clearRect(0,0,canvas.width,canvas.height); petals.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); })();
+  </script>
+</body>
+</html>
